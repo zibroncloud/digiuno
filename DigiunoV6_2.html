@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Digiuno intermittente v6.2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body { font-family: system-ui, sans-serif; }
+        .progress-circle { transition: stroke-dashoffset 0.5s ease; }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-100 min-h-screen flex flex-col max-w-md mx-auto border-x border-zinc-800">
+
+<header class="bg-zinc-900 p-5 flex items-center justify-between border-b border-zinc-800">
+    <div class="flex items-center gap-3">
+        <span class="text-4xl">🔥</span>
+        <div>
+            <h1 class="text-3xl font-bold text-white">Digiuno intermittente</h1>
+            <p class="text-orange-400 text-sm font-medium">by Zibron Cloud v6.2</p>
+        </div>
+    </div>
+    <i onclick="showView('stats')" class="fa-solid fa-chart-simple text-2xl text-zinc-400 cursor-pointer"></i>
+</header>
+
+<main class="flex-1 p-5 overflow-auto pb-24">
+
+    <!-- HOME -->
+    <div id="view-home" class="view">
+        <div id="fasting-mode" class="hidden">
+            <div class="text-center mb-8">
+                <p class="text-emerald-400 text-sm font-medium">STAI DIGIUNANDO</p>
+                <div id="protocol-big" class="text-2xl font-bold text-white mt-1"></div>
+            </div>
+
+            <div class="relative w-56 h-56 mx-auto">
+                <svg class="w-full h-full -rotate-90" viewBox="0 0 256 256">
+                    <circle cx="128" cy="128" r="110" fill="none" stroke="#27272a" stroke-width="28"/>
+                    <circle id="progress" cx="128" cy="128" r="110" fill="none" stroke="#10b981" 
+                            stroke-width="28" stroke-dasharray="690" stroke-dashoffset="690" 
+                            stroke-linecap="round" class="progress-circle"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <div id="countdown" class="text-6xl font-mono font-bold tracking-widest">00:00:00</div>
+                    <div class="text-emerald-300 text-sm mt-2">rimanenti</div>
+                </div>
+            </div>
+
+            <button onclick="endFast()" class="mt-8 bg-red-600 hover:bg-red-700 w-full py-5 rounded-2xl text-xl font-bold flex items-center justify-center gap-3">
+                <i class="fa-solid fa-utensils"></i> HO MANGIATO - TERMINA
+            </button>
+
+            <div class="mt-10">
+                <p class="text-center text-xs text-zinc-400 mb-4">MODIFICA DURATA IN CORSA</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="adjustFast(30)" class="bg-zinc-800 hover:bg-emerald-700 py-5 rounded-2xl flex items-center justify-center gap-2 text-emerald-300"><i class="fa-solid fa-plus"></i> +30 min</button>
+                    <button onclick="adjustFast(60)" class="bg-zinc-800 hover:bg-emerald-700 py-5 rounded-2xl flex items-center justify-center gap-2 text-emerald-300"><i class="fa-solid fa-plus"></i> +1 ora</button>
+                    <button onclick="adjustFast(-30)" class="bg-zinc-800 hover:bg-red-700 py-5 rounded-2xl flex items-center justify-center gap-2 text-red-300"><i class="fa-solid fa-minus"></i> -30 min</button>
+                    <button onclick="adjustFast(-60)" class="bg-zinc-800 hover:bg-red-700 py-5 rounded-2xl flex items-center justify-center gap-2 text-red-300"><i class="fa-solid fa-minus"></i> -1 ora</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="not-fasting-mode">
+            <div class="text-center py-10">
+                <div class="text-8xl mb-6">🍽️</div>
+                <h2 class="text-3xl font-bold mb-2">Pronto per iniziare?</h2>
+                <p class="text-zinc-400">Scegli il protocollo</p>
+            </div>
+            <div class="grid grid-cols-3 gap-4">
+                <button onclick="startFast(12)" class="bg-zinc-800 hover:bg-zinc-700 p-6 rounded-3xl text-left"><div class="text-2xl font-bold">12/12</div><div class="text-emerald-400 text-sm">Base</div></button>
+                <button onclick="startFast(14)" class="bg-zinc-800 hover:bg-zinc-700 p-6 rounded-3xl text-left"><div class="text-2xl font-bold">14/10</div><div class="text-emerald-400 text-sm">Leggero</div></button>
+                <button onclick="startFast(16)" class="bg-emerald-600 hover:bg-emerald-700 p-6 rounded-3xl text-left"><div class="text-2xl font-bold">16/8</div><div class="text-white text-sm">Classico ★</div></button>
+                <button onclick="startFast(18)" class="bg-zinc-800 hover:bg-zinc-700 p-6 rounded-3xl text-left"><div class="text-2xl font-bold">18/6</div><div class="text-emerald-400 text-sm">Avanzato</div></button>
+                <button onclick="startFast(20)" class="bg-zinc-800 hover:bg-zinc-700 p-6 rounded-3xl text-left"><div class="text-2xl font-bold">20/4</div><div class="text-emerald-400 text-sm">Warrior</div></button>
+                <button onclick="startFast(24)" class="bg-zinc-800 hover:bg-zinc-700 p-6 rounded-3xl text-left"><div class="text-2xl font-bold">1 Pasto</div><div class="text-emerald-400 text-sm">al giorno</div></button>
+                <button onclick="startFast(36)" class="bg-amber-600 hover:bg-amber-700 p-6 rounded-3xl text-left col-span-3"><div class="text-3xl font-bold text-white">Body Reset</div><div class="text-amber-200 text-sm">36 ore 🔥</div></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STORIA -->
+    <div id="view-history" class="view hidden">
+        <h2 class="text-2xl font-bold mb-6 flex items-center gap-3"><i class="fa-solid fa-clock-rotate-left"></i> Cronologia</h2>
+        <div id="history-list" class="space-y-4"></div>
+        <button onclick="editLastFast()" class="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 py-4 rounded-2xl font-bold flex items-center justify-center gap-2">
+            ✏️ Modifica ultimo digiuno
+        </button>
+    </div>
+
+    <!-- STATISTICHE -->
+    <div id="view-stats" class="view hidden">
+        <h2 class="text-2xl font-bold mb-8">Le tue statistiche</h2>
+
+        <div class="grid grid-cols-2 gap-4 mb-10">
+            <div class="bg-zinc-900 p-6 rounded-3xl"><div class="text-emerald-400 text-sm">DIGIUNI</div><div id="stat-count" class="text-5xl font-bold mt-2">0</div></div>
+            <div class="bg-zinc-900 p-6 rounded-3xl"><div class="text-emerald-400 text-sm">ORE TOTALI</div><div id="stat-hours" class="text-5xl font-bold mt-2">0</div></div>
+            <div class="bg-zinc-900 p-6 rounded-3xl"><div class="text-emerald-400 text-sm">MEDIA</div><div id="stat-avg" class="text-5xl font-bold mt-2">0.0</div><div class="text-xs text-zinc-500">ore per digiuno</div></div>
+            <div class="bg-zinc-900 p-6 rounded-3xl"><div class="text-emerald-400 text-sm">STREAK 🔥</div><div id="stat-streak" class="text-5xl font-bold mt-2">0</div><div class="text-xs text-zinc-500">giorni consecutivi</div></div>
+        </div>
+
+        <div class="flex gap-4 mb-8">
+            <button onclick="exportToCSV()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-5 rounded-3xl font-bold flex items-center justify-center gap-2">📤 Esporta CSV</button>
+            <button onclick="triggerImport()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 py-5 rounded-3xl font-bold flex items-center justify-center gap-2">📥 Importa CSV</button>
+        </div>
+
+        <input id="csv-import" type="file" accept=".csv" class="hidden">
+
+        <button onclick="clearAllData()" class="w-full py-4 text-red-400 hover:text-red-500 text-sm flex items-center justify-center gap-2 mb-6">
+            <i class="fa-solid fa-trash"></i> CANCELLA TUTTI I DATI
+        </button>
+
+        <!-- AVVERTENZA IN FONDO -->
+        <div class="bg-zinc-900 border border-zinc-700 text-zinc-400 p-5 rounded-2xl text-center text-sm">
+            <i class="fa-solid fa-info-circle text-emerald-400 text-xl mb-2 block"></i>
+            <strong>IMPORTANTE:</strong> Questa Web-App registra i dati finché la memoria del browser non viene cancellata.<br>
+            <strong>Si consiglia di salvare periodicamente il file dello storico</strong> (Esporta CSV) per non perdere i tuoi progressi.
+        </div>
+    </div>
+</main>
+
+<nav class="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md w-full bg-zinc-900 border-t border-zinc-800">
+    <div class="flex text-xs">
+        <button onclick="showView('home')" class="flex-1 py-4 flex flex-col items-center text-emerald-400 nav-btn active"><i class="fa-solid fa-house text-xl"></i><span>Home</span></button>
+        <button onclick="showView('history')" class="flex-1 py-4 flex flex-col items-center text-zinc-400 hover:text-white nav-btn"><i class="fa-solid fa-list-ul text-xl"></i><span>Storia</span></button>
+        <button onclick="showView('stats')" class="flex-1 py-4 flex flex-col items-center text-zinc-400 hover:text-white nav-btn"><i class="fa-solid fa-chart-simple text-xl"></i><span>Stat</span></button>
+    </div>
+</nav>
+
+<script>
+// === VARIABILI ===
+let currentFast = null;
+let timerInterval = null;
+const CIRCUMFERENCE = 690;
+
+// === SALVATAGGIO ===
+function saveCurrent() {
+    if (currentFast) localStorage.setItem('currentFasting', JSON.stringify(currentFast));
+    else localStorage.removeItem('currentFasting');
+}
+
+function loadData() {
+    const saved = localStorage.getItem('currentFasting');
+    if (saved) currentFast = JSON.parse(saved);
+    if (currentFast && currentFast.end <= Date.now()) endFast(true);
+}
+
+// === TIMER ===
+function formatTime(ms) {
+    const totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function updateCountdown() {
+    if (!currentFast) return;
+    const remaining = currentFast.end - Date.now();
+    if (remaining <= 0) { endFast(true); return; }
+    document.getElementById('countdown').textContent = formatTime(remaining);
+    const totalMs = currentFast.totalHours * 3600000;
+    const elapsed = Date.now() - currentFast.start;
+    const progress = Math.min(1, elapsed / totalMs);
+    const offset = CIRCUMFERENCE * (1 - progress);
+    document.getElementById('progress').setAttribute('stroke-dashoffset', offset);
+}
+
+function startFast(hours) {
+    const now = Date.now();
+    let protocol = hours === 24 ? "1 Pasto al giorno" : hours === 36 ? "Body Reset 36h" : `${hours}/${24-hours}`;
+    currentFast = { start: now, end: now + hours*3600000, protocol, totalHours: hours };
+    saveCurrent();
+    showView('home');
+    startTimer();
+}
+
+function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    updateCountdown();
+    timerInterval = setInterval(updateCountdown, 1000);
+}
+
+function adjustFast(minutes) {
+    if (!currentFast) return;
+    const newEnd = currentFast.end + minutes * 60000;
+    if (newEnd < Date.now() + 60000) return alert("⛔ Non puoi accorciare così tanto!");
+    currentFast.end = newEnd;
+    currentFast.totalHours = (newEnd - currentFast.start) / 3600000;
+    currentFast.protocol = `Personalizzato (${Math.round(currentFast.totalHours)}h)`;
+    saveCurrent();
+    updateCountdown();
+    document.getElementById('protocol-big').textContent = currentFast.protocol;
+    alert(minutes > 0 ? `✅ +${minutes} min` : `✅ ${minutes} min`);
+}
+
+function endFast(auto = false) {
+    if (!currentFast) return;
+    const endTime = auto ? currentFast.end : Date.now();
+    const duration = (endTime - currentFast.start) / 3600000;
+
+    if (duration < 1) {
+        alert("❌ Digiuno troppo breve (< 1 ora)\nNon salvato nello storico.");
+        currentFast = null;
+        saveCurrent();
+        if (timerInterval) clearInterval(timerInterval);
+        showView('home');
+        return;
+    }
+
+    let history = JSON.parse(localStorage.getItem('fastingHistory') || '[]');
+    history.push({
+        id: Date.now(),
+        start: currentFast.start,
+        end: endTime,
+        duration: Math.round(duration * 10) / 10,
+        protocol: currentFast.protocol
+    });
+    localStorage.setItem('fastingHistory', JSON.stringify(history));
+
+    currentFast = null;
+    saveCurrent();
+    if (timerInterval) clearInterval(timerInterval);
+    alert(auto ? "🎉 Digiuno completato automaticamente!" : "💪 Ottimo lavoro! Digiuno salvato.");
+    showView('home');
+}
+
+// === MODIFICA ULTIMO ===
+function editLastFast() {
+    let history = JSON.parse(localStorage.getItem('fastingHistory') || '[]');
+    if (!history.length) return alert("Nessun digiuno da modificare");
+    const last = history[history.length - 1];
+    const newDuration = prompt(`Modifica durata ultimo digiuno\nAttuale: ${last.duration} ore\nNuova durata (ore, es. 15.5):`, last.duration);
+    if (newDuration === null) return;
+    const parsed = parseFloat(newDuration);
+    if (isNaN(parsed) || parsed < 1) return alert("Durata non valida (≥ 1 ora)");
+    const newEnd = last.start + parsed * 3600000;
+    last.duration = Math.round(parsed * 10) / 10;
+    last.end = newEnd;
+    localStorage.setItem('fastingHistory', JSON.stringify(history));
+    alert(`✅ Ultimo digiuno aggiornato a ${parsed} ore`);
+    renderHistory();
+    renderStats();
+}
+
+// === ELIMINA SINGOLO ===
+function deleteFast(id) {
+    if (!confirm("🗑️ Eliminare questo digiuno?")) return;
+    let history = JSON.parse(localStorage.getItem('fastingHistory') || '[]');
+    history = history.filter(item => item.id !== id);
+    localStorage.setItem('fastingHistory', JSON.stringify(history));
+    renderHistory();
+    renderStats();
+}
+
+// === EXPORT / IMPORT ===
+function exportToCSV() {
+    let history = JSON.parse(localStorage.getItem('fastingHistory') || '[]');
+    if (!history.length) return alert('Nessun dato da esportare');
+    let csv = "Data,Protocollo,Durata_ore,Inizio,Fine\n";
+    history.forEach(item => {
+        const d = new Date(item.start).toLocaleDateString('it-IT');
+        csv += `"${d}","${item.protocol.replace(/"/g,'""')}","${item.duration}","${new Date(item.start).toISOString()}","${new Date(item.end).toISOString()}"\n`;
+    });
+    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "digiuno_storia.csv";
+    link.click();
+}
+
+function triggerImport() {
+    document.getElementById('csv-import').click();
+}
+
+function handleImport(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        const lines = ev.target.result.trim().split(/\r?\n/);
+        const sep = lines[0].includes(';') && !lines[0].includes(',') ? ';' : ',';
+        const regex = new RegExp(sep + '(?=(?:(?:[^"]*"){2})*[^"]*$)');
+        let newHistory = [];
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
+            const row = lines[i].split(regex);
+            if (row.length < 5) continue;
+            const protocol = row[1].replace(/^"|"$/g, '').replace(/""/g, '"');
+            let durationStr = row[2].replace(/^"|"$/g, '').replace(',', '.');
+            const duration = parseFloat(durationStr);
+            if (isNaN(duration) || duration < 1) continue;
+            const start = Date.parse(row[3].replace(/^"|"$/g, ''));
+            const end = Date.parse(row[4].replace(/^"|"$/g, ''));
+            if (isNaN(start) || isNaN(end)) continue;
+            newHistory.push({id: Date.now()+i, start, end, duration: Math.round(duration*10)/10, protocol});
+        }
+        if (!newHistory.length) return alert('Nessun dato valido trovato');
+        localStorage.setItem('fastingHistory', JSON.stringify(newHistory));
+        alert(`✅ Importati ${newHistory.length} digiuni!`);
+        renderHistory();
+        renderStats();
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+}
+
+// === RENDER HISTORY ===
+function renderHistory() {
+    const container = document.getElementById('history-list');
+    let history = JSON.parse(localStorage.getItem('fastingHistory') || '[]');
+    if (!history.length) {
+        container.innerHTML = `<p class="text-center text-zinc-500 py-10">Nessun digiuno ancora.<br>Inizia il primo!</p>`;
+        return;
+    }
+    history.sort((a,b) => b.start - a.start);
+    let html = '';
+    history.forEach(item => {
+        const date = new Date(item.start).toLocaleDateString('it-IT', {weekday:'short', day:'numeric', month:'short'});
+        html += `
+            <div class="bg-zinc-900 p-5 rounded-3xl flex justify-between items-center">
+                <div>
+                    <div class="font-medium">${date}</div>
+                    <div class="text-emerald-400 text-sm">${item.protocol}</div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <div class="text-3xl font-bold">${item.duration}</div>
+                        <div class="text-xs text-zinc-500">ore</div>
+                    </div>
+                    <button onclick="deleteFast(${item.id})" class="text-red-400 hover:text-red-500 text-2xl">🗑️</button>
+                </div>
+            </div>`;
+    });
+    container.innerHTML = html;
+}
+
+// === STATISTICHE ===
+function calculateStreak() {
+    let h = JSON.parse(localStorage.getItem('fastingHistory') || '[]');
+    if (!h.length) return 0;
+    h.sort((a,b)=>b.end-a.end);
+    let streak=1, prev=new Date(h[0].end); prev.setHours(0,0,0,0);
+    for (let i=1; i<h.length; i++) {
+        let curr=new Date(h[i].end); curr.setHours(0,0,0,0);
+        if (prev-curr===86400000) {streak++; prev=curr;} else break;
+    }
+    return streak;
+}
+
+function renderStats() {
+    let history = JSON.parse(localStorage.getItem('fastingHistory') || '[]');
+    let totalFasts = history.length;
+    let totalHours = history.reduce((sum, i) => sum + i.duration, 0);
+    let avg = totalFasts ? totalHours / totalFasts : 0;
+    document.getElementById('stat-count').textContent = totalFasts;
+    document.getElementById('stat-hours').textContent = Math.round(totalHours);
+    document.getElementById('stat-avg').textContent = avg.toFixed(1);
+    document.getElementById('stat-streak').textContent = calculateStreak();
+}
+
+function showView(view) {
+    document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+    document.getElementById(`view-${view}`).classList.remove('hidden');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active', 'text-emerald-400'));
+    const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn => btn.getAttribute('onclick').includes(view));
+    if (activeBtn) activeBtn.classList.add('active', 'text-emerald-400');
+    if (view === 'home') renderHome();
+    if (view === 'history') renderHistory();
+    if (view === 'stats') renderStats();
+}
+
+function renderHome() {
+    const fasting = document.getElementById('fasting-mode');
+    const not = document.getElementById('not-fasting-mode');
+    if (currentFast) {
+        fasting.classList.remove('hidden');
+        not.classList.add('hidden');
+        document.getElementById('protocol-big').textContent = currentFast.protocol;
+        startTimer();
+    } else {
+        fasting.classList.add('hidden');
+        not.classList.remove('hidden');
+    }
+}
+
+function clearAllData() {
+    if (confirm('❗ Cancellare TUTTO?')) {
+        localStorage.clear();
+        location.reload();
+    }
+}
+
+// === AVVIO ===
+window.onload = function() {
+    tailwind.config = { content: ["*"] };
+    loadData();
+    showView('home');
+    document.getElementById('csv-import').addEventListener('change', handleImport);
+    if (currentFast) startTimer();
+};
+</script>
+</body>
+</html>
